@@ -15,7 +15,40 @@ const MyChart = () => {
         id: "bar-chart1",
       },
       xaxis: {
-        categories: [],
+        categories: [
+          "01",
+          "02",
+          "03",
+          "04",
+          "05",
+          "06",
+          "07",
+          "08",
+          "09",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30",
+
+
+        ],
       },
     },
     series: [
@@ -35,8 +68,18 @@ const MyChart = () => {
       },
       xaxis: {
         categories: [
-          "Đầu Năm",
-          "Hiện Tại",
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
         ],
       },
     },
@@ -183,17 +226,18 @@ const MyChart = () => {
       setLoading(true);
 
       // Gọi API để lấy dữ liệu doanh thu cho năm được chọn
-      const response = await axios.get(`http://localhost:8080/filter?year=${year}`);
-      const apiData = response.data.totalPrice;
-      console.log(apiData);
-      const newData = [0, apiData];
+      const response = await axios.get(`http://localhost:8080/byyear?selectedYear=${year}`);
+      const apiData = response.data.monthlyTotalPrices;
+      console.log("apiYear", apiData);
 
-      setChartData1((prevChartData: any) => ({
+
+
+      setChartData2((prevChartData: any) => ({
         ...prevChartData,
         series: [
           {
             ...prevChartData.series[0],
-            data: newData,
+            data: apiData,
           },
         ],
 
@@ -213,26 +257,25 @@ const MyChart = () => {
       setLoading(true);
 
       // Gọi API để lấy dữ liệu doanh thu cho năm được chọn
-      const response = await axios.get(`http://localhost:8080/filter?year=${year}&month=${month}`);
-      const apiData = response.data.totalPrice;
+      const response = await axios.get(`http://localhost:8080/bymonth?selectedYear=${year}&selectedMonth=${month}`);
+      const apiData = response.data.dailyTotalPrices;
       console.log("apiMonth", apiData);
-      const newData = [0, apiData];
 
-      setChartData2((prevChartData: any) => ({
+      setChartData1((prevChartData: any) => ({
         ...prevChartData,
         series: [
           {
             ...prevChartData.series[0],
-            data: newData,
+            data: apiData,
           },
         ],
-        options: {
-          ...prevChartData.options,
-          xaxis: {
-            ...prevChartData.options.xaxis,
-            categories: month,
-          },
-        },
+        // options: {
+        //   ...prevChartData.options,
+        //   xaxis: {
+        //     ...prevChartData.options.xaxis,
+        //     categories: month,
+        //   },
+        // },
 
       }));
 
@@ -288,7 +331,7 @@ const MyChart = () => {
           <ReactApexChart
             options={chartData1.options}
             series={chartData1.series}
-            type="bar"
+            type="area"
             height={350}
           />
         </div>
@@ -310,7 +353,7 @@ const MyChart = () => {
             <ReactApexChart
               options={chartData2.options}
               series={chartData2.series}
-              type="area"
+              type="bar"
               height={350}
             />
           </div>
