@@ -17,13 +17,13 @@ const HomePage = () => {
   const fetchProducts = async () => {
     try {
       await dispatch(fetchProductsAll()).unwrap();
-    } catch (error) {}
+    } catch (error) { }
   };
   //lấy categories
   const fetchCategories = async () => {
     try {
       await dispatch(fetchCategoriesAll()).unwrap();
-    } catch (error) {}
+    } catch (error) { }
   };
   console.log(product);
   console.log(category);
@@ -78,18 +78,18 @@ const HomePage = () => {
   //   setValue("productId", products._id); // Đặt giá trị mặc định cho trường 'id'
   // }, [products._id, setValue]);
 
-  const onSubmit = async (body: any) => {
-    try {
-      await dispatch(fetchAddToCard(body)).unwrap();
-      message.success({
-        content: "Bạn đã thêm vào giỏ hàng thành công",
-        key: "add",
-      });
-      console.log("cart", body);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const onSubmit = async (body: any) => {
+  //   try {
+  //     await dispatch(fetchAddToCard(body)).unwrap();
+  //     message.success({
+  //       content: "Bạn đã thêm vào giỏ hàng thành công",
+  //       key: "add",
+  //     });
+  //     console.log("cart", body);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -301,7 +301,7 @@ const HomePage = () => {
       {/* Vendor Start */}
       <div className="container-fluid py-5">
         <div className="row px-xl-5">
-          <div className="col" style={{marginLeft: "75px"}}>
+          <div className="col" style={{ marginLeft: "75px" }}>
             <div className="d-flex flex-row" >
               <div className="bg-light p-4">
                 <img src="../../src/assets/img/vendor-1.jpg" alt="" />

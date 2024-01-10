@@ -15,20 +15,7 @@ const MyChart = () => {
         id: "bar-chart1",
       },
       xaxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+        categories: [],
       },
     },
     series: [
@@ -39,27 +26,7 @@ const MyChart = () => {
     ],
   });
 
-  const [datamonthlyPrices, setDatamonthlyPrices] = useState({
-    chart: {
-      height: 450,
-    },
-    xaxis: {
-      categories: [],
-    },
-    yaxis: {
-      title: {
-        text: "Doanh thu (VNĐ)",
-      },
-    },
-    title: {
-      text: "Biểu đồ doanh thu hàng năm",
-      floating: false,
-      align: "center",
-      style: {
-        color: "#444",
-      },
-    },
-  });
+
 
   const [chartData2, setChartData2] = useState({
     options: {
@@ -68,18 +35,8 @@ const MyChart = () => {
       },
       xaxis: {
         categories: [
-          "2024",
-          "2023",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
+          "Đầu Năm",
+          "Hiện Tại",
         ],
       },
     },
@@ -90,6 +47,7 @@ const MyChart = () => {
       },
     ],
   });
+  console.log("char2", chartData2);
 
   const [chartData3, setChartData3] = useState({
     options: {
@@ -220,7 +178,7 @@ const MyChart = () => {
   // };
 
   // Hàm fetch dữ liệu từ API
-  const fetchData = async (year) => {
+  const fetchData = async (year: any) => {
     try {
       setLoading(true);
 
@@ -228,32 +186,56 @@ const MyChart = () => {
       const response = await axios.get(`http://localhost:8080/filter?year=${year}`);
       const apiData = response.data.totalPrice;
       console.log(apiData);
-      
+      const newData = [0, apiData];
 
-      // Cập nhật dữ liệu và options cho biểu đồ hàng tháng
-      const monthsFromAPI = apiData;
-      console.log(monthsFromAPI);
-      
-      const updatedSeriesData = apiData && apiData.totalPrice; // Kiểm tra xem apiData có tồn tại không
-      setMonthlyPrices(updatedSeriesData);
-      setChartData1((prevState) => ({
-        ...prevState,
-        series: [{ name: "Total Price", data: updatedSeriesData }],
+      setChartData1((prevChartData: any) => ({
+        ...prevChartData,
+        series: [
+          {
+            ...prevChartData.series[0],
+            data: newData,
+          },
+        ],
+
       }));
 
-      // Cập nhật dữ liệu và options cho biểu đồ hàng năm
-      const updatedCategories = apiData.map((month) => `Tháng ${month.month}`);
-      setChartData2((prevState) => ({
-        ...prevState,
-        xaxis: {
-          ...prevState.xaxis,
-          categories: updatedCategories,
+
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  // CALL API THEO Tháng
+  const fetchDataMonth = async (year: any, month: any) => {
+    try {
+      setLoading(true);
+
+      // Gọi API để lấy dữ liệu doanh thu cho năm được chọn
+      const response = await axios.get(`http://localhost:8080/filter?year=${year}&month=${month}`);
+      const apiData = response.data.totalPrice;
+      console.log("apiMonth", apiData);
+      const newData = [0, apiData];
+
+      setChartData2((prevChartData: any) => ({
+        ...prevChartData,
+        series: [
+          {
+            ...prevChartData.series[0],
+            data: newData,
+          },
+        ],
+        options: {
+          ...prevChartData.options,
+          xaxis: {
+            ...prevChartData.options.xaxis,
+            categories: month,
+          },
         },
-        series: [{ name: "Total Price", data: updatedSeriesData }],
+
       }));
 
-      // Cập nhật dữ liệu và options cho các biểu đồ khác nếu cần
-      // ...
 
       setLoading(false);
     } catch (error) {
@@ -266,6 +248,13 @@ const MyChart = () => {
   const onChangeYear: DatePickerProps["onChange"] = (_, dateString) => {
     if (dateString) {
       fetchData(dateString);
+    }
+  };
+  const onChangeMonth: DatePickerProps['onChange'] = (_, dateString) => {
+    const lastTwoCharacters = dateString.slice(-2);
+    const lastTwoYear = dateString.slice(0, 4);
+    if (lastTwoCharacters && lastTwoYear) {
+      fetchDataMonth(lastTwoYear, lastTwoCharacters)
     }
   };
 
@@ -294,11 +283,7 @@ const MyChart = () => {
         <div style={{ flex: 1, marginRight: "10px" }}>
           <div className="flex justify-between">
             <h3 className="text-[30px]">Doanh thu hàng tháng </h3>
-            <DatePicker
-              className="w-[300px] rounded-lg shadow-md"
-              onChange={onChangeYear}
-              picker="year"
-            />
+            <DatePicker onChange={onChangeMonth} picker="month" />
           </div>
           <ReactApexChart
             options={chartData1.options}
@@ -322,12 +307,12 @@ const MyChart = () => {
             id="chart"
             className="w-[65%] bg-[#ffffff] p-[30px] rounded-md shadow-lg"
           >
-              <ReactApexChart
-                options={chartData2.options}
-                series={chartData2.series}
-                type="area"
-                height={350}
-              />
+            <ReactApexChart
+              options={chartData2.options}
+              series={chartData2.series}
+              type="area"
+              height={350}
+            />
           </div>
         </div>
       </div>
