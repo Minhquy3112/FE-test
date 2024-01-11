@@ -5,6 +5,8 @@ import { AppDispatch } from "../store";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { createVnp } from "../api/vnp";
+import { createPayment } from "../redux/vnpay.reducer";
 
 const CheckoutPage = () => {
   const [products, setProducts] = useState();
@@ -14,15 +16,26 @@ const CheckoutPage = () => {
   const fetchData = () => {
     getCartUser().then(({ data }) => setProducts(data.cart));
   };
+  const fetchPayment = () => {
+    dispatch(createPayment())
+  }
   useEffect(() => {
     fetchData();
+    fetchPayment()
   }, []);
 
+
   const onSubmit = async (body: any) => {
-    await (checkOut(body));
-    message.success("Bạn đã đặt hàng thành công");
-    navigate("/");
-  };
+    if (body.paymentMethod === "EWallets") {
+      const token = ""
+      navigate(`sandbox.vnpayment.vn/paymentv2/Transaction/PaymentMethod.html?token=${token}`)
+    }
+    else {
+      await (checkOut(body));
+      message.success("Bạn đã đặt hàng thành công");
+      navigate("/");
+    };
+  }
 
   return (
     <>
@@ -246,6 +259,7 @@ const CheckoutPage = () => {
                         id="paypal"
                         {...register("paymentMethod")}
                         value="EWallets"
+
                       />
                       <label className="custom-control-label" htmlFor="paypal">
                         Thanh toán qua ví điện tử

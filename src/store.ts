@@ -6,6 +6,7 @@ import { categoryReducer } from "./redux/categories.reducer";
 import { userReducer } from "./redux/user.reducer";
 import { cartReducer } from "./redux/cart.reducer";
 import { billReducer } from "./redux/bill.reducer";
+import { paymentReducer } from "./redux/vnpay.reducer";
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ export const store = configureStore({
     categories: categoryReducer,
     users: userReducer,
     carts:cartReducer,
-    bills: billReducer
+    bills: billReducer,
+    payments :paymentReducer,
   },
 });
 
